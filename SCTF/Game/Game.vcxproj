@@ -135,6 +135,24 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Border.hpp" />
+    <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="CollisionSolver.hpp" />
+    <ClInclude Include="Configuration.hpp" />
+    <ClInclude Include="ElasticConstraints.hpp" />
+    <ClInclude Include="FixPointConstraints.hpp" />
+    <ClInclude Include="Game.hpp" />
+    <ClInclude Include="MaterialType.hpp" />
+    <ClInclude Include="Math.hpp" />
+    <ClInclude Include="Particles.hpp" />
+    <ClInclude Include="Partition.hpp" />
+    <ClInclude Include="Partitioner.hpp" />
+    <ClInclude Include="PrecalculatedRandomNumbers.hpp" />
+    <ClInclude Include="Renderer.hpp" />
+    <ClInclude Include="RigidConstraints.hpp" />
+    <ClInclude Include="VerletIntegrator.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

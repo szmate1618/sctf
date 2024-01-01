@@ -24,7 +24,7 @@ public:
 		config{ config },
 		particles{config},
 		border{config, particles},
-		partitioner{config, border, particles, 980, 980},
+		partitioner{config, border, particles, 80, 80},
 		verletIntegrator{config, particles},
 		collisionSolver{config, partitioner, particles},
 		fixPointConstraint{config, particles},

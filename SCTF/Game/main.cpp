@@ -10,10 +10,10 @@
 
 int main()
 {
-	Configuration config{ 60,1001,1001,0.0 };
+	Configuration config{ 60,101,101,0.0 };
 	Game game{ config };
 
-	game.LoadMap("map002");
+	game.LoadMap("map001");
 
 	sf::RenderWindow window(sf::VideoMode(1000, 1000), "Máté a király");
 	window.setFramerateLimit(config.framerate);
