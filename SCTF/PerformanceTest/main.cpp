@@ -14,7 +14,7 @@ int main()
 	game.LoadMap("../Game/map001");
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-	for (size_t i = 0; i < config.framerate * 12; i++)
+	for (size_t i = 0; i < config.framerate * 120; i++)
 	{
 		game.Update(1.f/config.framerate);
 	}
