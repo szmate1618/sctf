@@ -23,7 +23,8 @@ public:
 	CollisionSolver(const Configuration& config, Partitioner& partitioner, Particles& particles):
 		config{ config },
 		particles{ particles },
-		partitioner{ partitioner }
+		partitioner{ partitioner },
+		running{ true }
 	{
 		std::vector<size_t> column_indices[8];
 		size_t columns_per_thread = partitioner.number_of_columns / 4;
@@ -39,18 +40,21 @@ public:
 			column_indices[4 + j].push_back((j + 1) * columns_per_thread - 1);
 		}
 
-		worker_threads.emplace_back([this, column_indices]() { while (true) { UpdateColumns(column_indices[0], 0); } });
-		worker_threads.emplace_back([this, column_indices]() { while (true) { UpdateColumns(column_indices[1], 1); } });
-		worker_threads.emplace_back([this, column_indices]() { while (true) { UpdateColumns(column_indices[2], 2); } });
-		worker_threads.emplace_back([this, column_indices]() { while (true) { UpdateColumns(column_indices[3], 3); } });
-		worker_threads.emplace_back([this, column_indices]() { while (true) { UpdateColumns2(column_indices[4], 4); } });
-		worker_threads.emplace_back([this, column_indices]() { while (true) { UpdateColumns2(column_indices[5], 5); } });
-		worker_threads.emplace_back([this, column_indices]() { while (true) { UpdateColumns2(column_indices[6], 6); } });
-		worker_threads.emplace_back([this, column_indices]() { while (true) { UpdateColumns2(column_indices[7], 7); } });
+		worker_threads.emplace_back([this, column_indices]() { while (running) { UpdateColumns(column_indices[0], 0); } });
+		worker_threads.emplace_back([this, column_indices]() { while (running) { UpdateColumns(column_indices[1], 1); } });
+		worker_threads.emplace_back([this, column_indices]() { while (running) { UpdateColumns(column_indices[2], 2); } });
+		worker_threads.emplace_back([this, column_indices]() { while (running) { UpdateColumns(column_indices[3], 3); } });
+		worker_threads.emplace_back([this, column_indices]() { while (running) { UpdateColumns2(column_indices[4], 4); } });
+		worker_threads.emplace_back([this, column_indices]() { while (running) { UpdateColumns2(column_indices[5], 5); } });
+		worker_threads.emplace_back([this, column_indices]() { while (running) { UpdateColumns2(column_indices[6], 6); } });
+		worker_threads.emplace_back([this, column_indices]() { while (running) { UpdateColumns2(column_indices[7], 7); } });
 	}
 
 	~CollisionSolver()
 	{
+		running = false;
+		phase1_barrier.arrive_and_wait();
+		phase2_barrier.arrive_and_wait();
 		for (size_t i = 0; i < num_threads; i++)
 		{
 			worker_threads[i].join();
@@ -64,6 +68,7 @@ public:
 	void UpdateColumns(const std::vector<size_t>& column_indices, size_t thread_id)
 	{
 		phase1_barrier.arrive_and_wait();
+		if (!running) return;
 
 		for (size_t i: column_indices)
 		{
@@ -107,6 +112,7 @@ public:
 	void UpdateColumns2(const std::vector<size_t>& column_indices, size_t thread_id)
 	{
 		phase2_barrier.arrive_and_wait();
+		if (!running) return;
 
 		for (size_t i : column_indices)
 		{
@@ -164,6 +170,7 @@ private:
 	Partitioner& partitioner;
 
 	//Threading stuff.
+	bool running;
 	const int num_threads = 4;
 	std::vector<std::thread> worker_threads;
 	std::atomic<size_t> threads_ready = 0;
