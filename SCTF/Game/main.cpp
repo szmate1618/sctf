@@ -62,12 +62,12 @@ int main()
 
 		sf::Time elapsed = clock.restart();
 
-		/*sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
-		if (mouse_position.x >= 0 && mouse_position.x < window.getSize().x * 0.1) view.move(-0.1f * elapsed.asSeconds() * 100.f, 0);
-		if (mouse_position.x < window.getSize().x && mouse_position.x > window.getSize().x * 0.9) view.move(0.1f * elapsed.asSeconds() * 100.f, 0);
-		if (mouse_position.y >= 0 && mouse_position.y < window.getSize().y * 0.1) view.move(0, -0.1f * elapsed.asSeconds() * 100.f);
-		if (mouse_position.y < window.getSize().y && mouse_position.y > window.getSize().y * 0.9) view.move(0, 0.1f * elapsed.asSeconds() * 100.f);
-		*/
+		sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
+		if (mouse_position.x >= 0 && mouse_position.x < window.getSize().x * 0.1) camera.Move(-0.1f * elapsed.asSeconds() * 100.f, 0);
+		if (mouse_position.x < window.getSize().x && mouse_position.x > window.getSize().x * 0.9) camera.Move(0.1f * elapsed.asSeconds() * 100.f, 0);
+		if (mouse_position.y >= 0 && mouse_position.y < window.getSize().y * 0.1) camera.Move(0, -0.1f * elapsed.asSeconds() * 100.f);
+		if (mouse_position.y < window.getSize().y && mouse_position.y > window.getSize().y * 0.9) camera.Move(0, 0.1f * elapsed.asSeconds() * 100.f);
+		
 		std::cout << elapsed.asSeconds() << std::endl;
 		game.Update(elapsed.asSeconds());
 
