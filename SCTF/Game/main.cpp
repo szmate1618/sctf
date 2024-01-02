@@ -63,10 +63,14 @@ int main()
 		sf::Time elapsed = clock.restart();
 
 		sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
-		if (mouse_position.x >= 0 && mouse_position.x < window.getSize().x * 0.15) camera.Move(-0.1f * elapsed.asSeconds() * 100.f, 0);
-		if (mouse_position.x < window.getSize().x && mouse_position.x > window.getSize().x * 0.85) camera.Move(0.1f * elapsed.asSeconds() * 100.f, 0);
-		if (mouse_position.y >= 0 && mouse_position.y < window.getSize().y * 0.15) camera.Move(0, -0.1f * elapsed.asSeconds() * 100.f);
-		if (mouse_position.y < window.getSize().y && mouse_position.y > window.getSize().y * 0.85) camera.Move(0, 0.1f * elapsed.asSeconds() * 100.f);
+		float delta_min_x = mouse_position.x - window.getSize().x * 0.15;
+		float delta_max_x = window.getSize().x * 0.85 - mouse_position.x;
+		float delta_min_y = mouse_position.y - window.getSize().y * 0.15;
+		float delta_max_y = window.getSize().y * 0.85 - mouse_position.y;
+		if (delta_min_x < 0) camera.Move(delta_min_x * elapsed.asSeconds() * 0.5f, 0);
+		if (delta_max_x < 0) camera.Move(-delta_max_x * elapsed.asSeconds() * 0.5f, 0);
+		if (delta_min_y < 0) camera.Move(0.0f, delta_min_y * elapsed.asSeconds() * 0.5f);
+		if (delta_max_y < 0) camera.Move(0.0f, -delta_max_y * elapsed.asSeconds() * 0.5f);
 		
 		std::cout << elapsed.asSeconds() << std::endl;
 		game.Update(elapsed.asSeconds());
