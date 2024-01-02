@@ -44,6 +44,11 @@ int main()
 					camera.Resize(event.size.width, event.size.height);
 					break;
 				}
+				case sf::Event::MouseWheelScrolled:
+				{
+					camera.SetZoom(camera.GetZoom() + event.mouseWheelScroll.delta / 100.0f);
+					break;
+				}
 			}
 		}
 

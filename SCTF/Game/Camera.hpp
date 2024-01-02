@@ -25,7 +25,7 @@ public:
 
     void Resize(int width, int height) {
         view.setSize(width * zoom, height * zoom);
-        view.setCenter(view.getSize() * 0.5f);
+        //view.setCenter(view.getSize() * 0.5f);
         Update();
     }
 
@@ -33,6 +33,16 @@ public:
         zoom *= factor;
         view.zoom(factor);
         Update();
+    }
+
+    void SetZoom(float factor) {
+        view.zoom(factor / zoom);
+        zoom = factor;
+        Update();
+    }
+
+    float GetZoom() {
+        return zoom;
     }
 
     void Move(float offsetX, float offsetY) {
