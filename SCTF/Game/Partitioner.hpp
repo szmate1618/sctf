@@ -43,6 +43,9 @@ public:
 			if (partitions[x][y].ids.empty() || partitions[x][y].ids.back() != index)
 			{
 				partitions[x][y].ids.push_back(index);
+				partitions[x][y].positions.push_back(p);
+				partitions[x][y].original_positions.push_back(p);
+				partitions[x][y].deltas.push_back({ 0.0f, 0.0f });
 			}
 		}
 	}
@@ -53,6 +56,26 @@ public:
 		MaybeInsertIntoPartitionWithOffset(index, -0.5, 0.5);
 		MaybeInsertIntoPartitionWithOffset(index, -0.5, -0.5);
 		MaybeInsertIntoPartitionWithOffset(index, 0.5, -0.5);
+
+	}
+
+	void RestoreFromPartition()
+	{
+		for (size_t i = 0; i < partitions.size(); i++)
+		{
+			for (size_t j = 0; j < partitions[i].size(); j++)
+			{
+				for (size_t k = 0; k < partitions[i][j].ids.size(); k++)
+				{
+					auto delta = partitions[i][j].positions[k] - partitions[i][j].original_positions[k];
+					particles.current_position[partitions[i][j].ids[k]] += delta / 2.0f;
+				}
+				partitions[i][j].ids.resize(0);
+				partitions[i][j].positions.resize(0);
+				partitions[i][j].original_positions.resize(0);
+				partitions[i][j].deltas.resize(0);
+			}
+		}
 	}
 
 //private: //TODO: Do this correctly.

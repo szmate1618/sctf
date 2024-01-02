@@ -24,4 +24,7 @@ struct Partition {
 	float max_y;
 
 	std::vector<size_t> ids;
+	std::vector<sf::Vector2f> positions;
+	std::vector<sf::Vector2f> original_positions;
+	std::vector<sf::Vector2f> deltas;
 };

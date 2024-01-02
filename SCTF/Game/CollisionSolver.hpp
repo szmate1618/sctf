@@ -75,9 +75,10 @@ public:
 					{
 						for (size_t l = k + 1; l < partitioner.partitions[i][j].ids.size(); l++)
 						{
-							const auto& id1 = partitioner.partitions[i][j].ids[k];
-							const auto& id2 = partitioner.partitions[i][j].ids[l];
-							sf::Vector2f collision_vector = particles.current_position[id1] - particles.current_position[id2]; //TODO: Handle null collision vector.
+							auto& p = partitioner.partitions[i][j];
+							auto id1 = k;
+							auto id2 = l;
+							sf::Vector2f collision_vector = p.positions[id1] - p.positions[id2]; //TODO: Handle null collision vector.
 
 							if (collision_vector.x == 0 && collision_vector.y == 0)
 							{
@@ -87,16 +88,15 @@ public:
 							float distance_squared = GetLengthSquared(collision_vector);
 							if (distance_squared < 1)
 							{
-								float distance = GetLengthForUnitOrShorter(collision_vector);
+								float distance = GetLength(collision_vector); //TODO: Sometimes this results in a normalized vector longer than 1.
 								if (distance == 0) continue;
 								sf::Vector2f normalized_collision_vector = collision_vector / distance;
-								particles.current_position[id1] = particles.current_position[id1] + normalized_collision_vector * (1 - distance) / 2.0f;
-								particles.current_position[id2] = particles.current_position[id2] - normalized_collision_vector * (1 - distance) / 2.0f;
+								p.positions[id1] += normalized_collision_vector * (1 - distance) / 2.0f;
+								p.positions[id2] -= normalized_collision_vector * (1 - distance) / 2.0f;
 							}
 						}
 					}
 				}
-				partitioner.partitions[i][j].ids.resize(0);
 			}
 		}
 
@@ -112,6 +112,8 @@ public:
 		phase1_end_barrier.arrive_and_wait();
 		phase2_start_barrier.arrive_and_wait();
 		phase2_end_barrier.arrive_and_wait();
+
+		partitioner.RestoreFromPartition(); // TODO: probably do not no need to do this for every substep.
 	}
 
 	static void NoOp() noexcept {}
