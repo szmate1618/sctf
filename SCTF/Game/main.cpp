@@ -34,16 +34,16 @@ int main()
 			// "close requested" event: we close the window
 			switch (event.type)
 			{
-			case sf::Event::Closed:
-			{
-				window.close();
-				break;
-			}
-			case sf::Event::Resized:
-			{
-				camera.Resize(event.size.width, event.size.height);
-				break;
-			}
+				case sf::Event::Closed:
+				{
+					window.close();
+					break;
+				}
+				case sf::Event::Resized:
+				{
+					camera.Resize(event.size.width, event.size.height);
+					break;
+				}
 			}
 		}
 
