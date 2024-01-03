@@ -8,7 +8,7 @@
 class Camera
 {
 public:
-    Camera(const Configuration& config, sf::RenderWindow& window) : config{ config }, window{ window }
+    Camera(const Configuration& config, sf::RenderWindow& window) : config{ config }, window{ window }, zoom{ 1.0f }
     {
         Reset();
     }
@@ -24,14 +24,25 @@ public:
     }
 
     void Resize(int width, int height) {
-        view.setSize(static_cast<float>(width), static_cast<float>(height));
-        view.setCenter(view.getSize() * 0.5f);
+        view.setSize(width * zoom, height * zoom);
+        //view.setCenter(view.getSize() * 0.5f);
         Update();
     }
 
     void Zoom(float factor) {
+        zoom *= factor;
         view.zoom(factor);
         Update();
+    }
+
+    void SetZoom(float factor) {
+        view.zoom(factor / zoom);
+        zoom = factor;
+        Update();
+    }
+
+    float GetZoom() {
+        return zoom;
     }
 
     void Move(float offsetX, float offsetY) {
@@ -60,4 +71,6 @@ private:
     const Configuration& config;
     sf::RenderWindow& window;
     sf::View view;
+
+    float zoom;
 };
