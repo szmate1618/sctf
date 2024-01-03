@@ -10,7 +10,7 @@
 
 int main()
 {
-	Configuration config{ 60,101,101,0.0 };
+	Configuration config{ 60,100,100,0.0 };
 	Game game{ config };
 
 	game.LoadMap("map001");

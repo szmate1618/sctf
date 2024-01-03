@@ -33,8 +33,8 @@ public:
 	void MaybeInsertIntoPartitionWithOffset(size_t index, float offset_x, float offset_y)
 	{
 		sf::Vector2f p = particles.current_position[index];
-		size_t x = static_cast<size_t>((p.x + offset_x) / (config.width / number_of_columns));
-		size_t y = static_cast<size_t>((p.y + offset_y) / (config.height / number_of_rows));
+		size_t x = static_cast<size_t>(std::floorf(p.x + offset_x));
+		size_t y = static_cast<size_t>(std::floorf(p.y + offset_y));
 		if (x >= number_of_columns) x = number_of_columns - 1;
 		if (y >= number_of_rows) y = number_of_rows - 1;
 
@@ -49,10 +49,7 @@ public:
 
 	void MaybeInsertIntoPartition(size_t index)
 	{
-		MaybeInsertIntoPartitionWithOffset(index, 0.5, 0.5);
-		MaybeInsertIntoPartitionWithOffset(index, -0.5, 0.5);
-		MaybeInsertIntoPartitionWithOffset(index, -0.5, -0.5);
-		MaybeInsertIntoPartitionWithOffset(index, 0.5, -0.5);
+		MaybeInsertIntoPartitionWithOffset(index, 0.0f, 0.0f);
 	}
 
 //private: //TODO: Do this correctly.

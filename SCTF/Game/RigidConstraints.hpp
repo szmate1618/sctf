@@ -31,8 +31,8 @@ public:
 				float distance = GetLength(collision_vector);
 				if (distance == 0) continue;
 				sf::Vector2f normalized_collision_vector = collision_vector / distance;
-				particles.current_position[id1] = particles.current_position[id1] + normalized_collision_vector * (1 - distance) / 2.0f;
-				particles.current_position[id2] = particles.current_position[id2] - normalized_collision_vector * (1 - distance) / 2.0f;
+				particles.current_position[id1] += normalized_collision_vector * (1 - distance) / 2.0f;
+				particles.current_position[id2] -= normalized_collision_vector * (1 - distance) / 2.0f;
 			}
 		}
 	}

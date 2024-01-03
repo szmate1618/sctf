@@ -34,7 +34,7 @@ public:
 		}
 		for (size_t j = 0; j < parallelism; j++)
 		{
-			column_indices[4 + j].push_back((j + 1) * columns_per_thread - 1);
+			column_indices[parallelism + j].push_back((j + 1) * columns_per_thread - 1);
 		}
 
 		for (size_t i = 0; i < parallelism; i++)
@@ -59,6 +59,26 @@ public:
 		}
 	}
 
+	void SolveCollision(size_t id1, size_t id2)
+	{
+		sf::Vector2f collision_vector = particles.current_position[id1] - particles.current_position[id2]; //TODO: Handle null collision vector.
+
+		if (collision_vector.x == 0 && collision_vector.y == 0)
+		{
+			return;
+		}
+
+		float distance_squared = GetLengthSquared(collision_vector);
+		if (distance_squared < 1)
+		{
+			float distance = GetLengthForUnitOrShorter(collision_vector);
+			if (distance == 0) return;
+			sf::Vector2f normalized_collision_vector = collision_vector / distance;
+			particles.current_position[id1] = particles.current_position[id1] + normalized_collision_vector * (1 - distance) / 2.0f;
+			particles.current_position[id2] = particles.current_position[id2] - normalized_collision_vector * (1 - distance) / 2.0f;
+		}
+	}
+
 	void UpdateColumns(const std::vector<size_t>& column_indices, size_t thread_id)
 	{
 		if (thread_id < parallelism) { phase1_start_barrier.arrive_and_wait(); }
@@ -77,26 +97,50 @@ public:
 						{
 							const auto& id1 = partitioner.partitions[i][j].ids[k];
 							const auto& id2 = partitioner.partitions[i][j].ids[l];
-							sf::Vector2f collision_vector = particles.current_position[id1] - particles.current_position[id2]; //TODO: Handle null collision vector.
-
-							if (collision_vector.x == 0 && collision_vector.y == 0)
-							{
-								continue;
-							}
-
-							float distance_squared = GetLengthSquared(collision_vector);
-							if (distance_squared < 1)
-							{
-								float distance = GetLengthForUnitOrShorter(collision_vector);
-								if (distance == 0) continue;
-								sf::Vector2f normalized_collision_vector = collision_vector / distance;
-								particles.current_position[id1] = particles.current_position[id1] + normalized_collision_vector * (1 - distance) / 2.0f;
-								particles.current_position[id2] = particles.current_position[id2] - normalized_collision_vector * (1 - distance) / 2.0f;
-							}
+							SolveCollision(id1, id2);
 						}
 					}
 				}
-				partitioner.partitions[i][j].ids.resize(0);
+				for (size_t k = 0; k < partitioner.partitions[i][j].ids.size(); k++)
+				{
+					if (i < partitioner.number_of_columns - 1)
+					{
+						for (size_t l = 0; l < partitioner.partitions[i + 1][j].ids.size(); l++)
+						{
+							const auto& id1 = partitioner.partitions[i][j].ids[k];
+							const auto& id2 = partitioner.partitions[i + 1][j].ids[l];
+							SolveCollision(id1, id2);
+						}
+					}
+					if (j < partitioner.number_of_rows - 1)
+					{
+						for (size_t l = 0; l < partitioner.partitions[i][j + 1].ids.size(); l++)
+						{
+							const auto& id1 = partitioner.partitions[i][j].ids[k];
+							const auto& id2 = partitioner.partitions[i][j + 1].ids[l];
+							SolveCollision(id1, id2);
+						}
+					}
+					if (i < partitioner.number_of_columns - 1 && j < partitioner.number_of_rows - 1)
+					{
+						for (size_t l = 0; l < partitioner.partitions[i + 1][j + 1].ids.size(); l++)
+						{
+							const auto& id1 = partitioner.partitions[i][j].ids[k];
+							const auto& id2 = partitioner.partitions[i + 1][j + 1].ids[l];
+							SolveCollision(id1, id2);
+						}
+					}
+					if (i < partitioner.number_of_columns - 1 && j > 0)
+					{
+						for (size_t l = 0; l < partitioner.partitions[i + 1][j - 1].ids.size(); l++)
+						{
+							const auto& id1 = partitioner.partitions[i][j].ids[k];
+							const auto& id2 = partitioner.partitions[i + 1][j - 1].ids[l];
+							SolveCollision(id1, id2);
+						}
+					}
+				}
+				partitioner.partitions[i][j].ids.resize(0); //TODO: This is correct only if we are iterating from lower indices to higher with i and j.
 			}
 		}
 
