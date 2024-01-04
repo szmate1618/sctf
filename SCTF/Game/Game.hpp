@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <iostream>
 #include <limits>
+#include <cmath>
 
 #include <SFML/Graphics.hpp>
 
@@ -76,11 +77,19 @@ public:
 				{
 					if (x < width - 1 && inserted_id[i + 1] != no_id)
 					{
-						rigidConstraint.AddConstraint(inserted_id[i], inserted_id[i + 1]);
+						rigidConstraint.AddConstraint(inserted_id[i], inserted_id[i + 1], 1.0f);
 					}
 					if (y < height - 1 && inserted_id[i + width] != no_id)
 					{
-						rigidConstraint.AddConstraint(inserted_id[i], inserted_id[i + width]);
+						rigidConstraint.AddConstraint(inserted_id[i], inserted_id[i + width], 1.0f);
+					}
+					if (x < width - 1 && y < height - 1 && inserted_id[i + width + 1] != no_id)
+					{
+						rigidConstraint.AddConstraint(inserted_id[i], inserted_id[i + width + 1], std::sqrtf(2.0f));
+					}
+					if (x < width - 1 && y > 0 && inserted_id[i - width + 1] != no_id)
+					{
+						rigidConstraint.AddConstraint(inserted_id[i], inserted_id[i - width + 1], std::sqrtf(2.0f));
 					}
 				}
 			}
