@@ -14,6 +14,7 @@ int main()
 	Game game{ config };
 
 	game.LoadMap("map001");
+	//game.AddSomeBalls();
 
 	sf::RenderWindow window(sf::VideoMode(1000, 1000), "Máté a király");
 	window.setFramerateLimit(config.framerate);
