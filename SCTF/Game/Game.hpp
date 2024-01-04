@@ -33,13 +33,17 @@ public:
 		renderer{config, particles},
 		time_to_simulate{0}
 	{
-		/*for (float i = 0; i < 100; i += 1)
+	}
+
+	void AddSomeBalls() //This is good for stability testing.
+	{
+		for (float i = 0; i < 100; i += 1)
 		{
-			for (float j = 0; j < 10; j += 1)
+			for (float j = 0; j < 60; j += 1)
 			{
 				particles.AddParticle({ i, j });
 			}
-		}*/
+		}
 	}
 
 	void LoadMap(std::filesystem::path map_directory_relative)
