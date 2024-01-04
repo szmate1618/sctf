@@ -34,7 +34,7 @@ public:
 		}
 		for (size_t j = 0; j < parallelism; j++)
 		{
-			column_indices[4 + j].push_back((j + 1) * columns_per_thread - 1);
+			column_indices[parallelism + j].push_back((j + 1) * columns_per_thread - 1);
 		}
 
 		for (size_t i = 0; i < parallelism; i++)
